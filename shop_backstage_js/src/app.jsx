@@ -37,7 +37,6 @@ const codeMessage = {
   503: '服务不可用，服务器暂时过载或维护。',
   504: '网关超时。',
 };
-
 // 全局请求
 const requestInterceptor = (url, options) => {
   console.log(options)
@@ -52,13 +51,11 @@ const requestInterceptor = (url, options) => {
     },
   };
 };
-
 // 全局响应拦截
 const responseInterceptor = (response, options) => {
   console.log('返回了');
   return response;
 };
-
 const errorHandler = (error) => {
   const { response } = error;
   if (response && response.status) {
@@ -79,7 +76,6 @@ const errorHandler = (error) => {
   }
   throw error;
 };
-
 export const request = {
   timeout: 5000,
   errorConfig: {},
@@ -90,7 +86,7 @@ export const request = {
   responseInterceptors: [responseInterceptor],
 };
 
-
+// getInitialState会在整个应用最开始执行，返回值会作为全局共享的数据 约定一个地方生产和消费初始化数据
 export async function getInitialState() {
   const fetchUserInfo = async () => {
     try {
@@ -101,8 +97,10 @@ export async function getInitialState() {
     }
 
     return undefined;
-  }; // 如果不是登录页面，执行
-
+  };
+  // 如果不是登录页面，执行
+  console.log(history)
+  console.log(loginPath)
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo();
     return {
@@ -118,11 +116,14 @@ export async function getInitialState() {
   };
 } // ProLayout 支持的api https://procomponents.ant.design/components/layout
 
+// 在构建时是无法使用 dom 的，所以有些配置可能需要运行时来配置（运行时配置）
 export const layout = ({ initialState, setInitialState }) => {
+  console.log(initialState)
+  console.log(setInitialState)
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
+    waterMarkProps: {      // 添加水印
       content: initialState?.currentUser?.name,
     },
     footerRender: () => <Footer />,
