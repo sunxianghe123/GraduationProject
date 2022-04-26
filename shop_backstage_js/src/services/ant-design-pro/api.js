@@ -4,10 +4,13 @@
 import { request } from 'umi';
 /** 获取当前的用户 GET /api/currentUser */
 
-export async function currentUser(options) {
-  return request('/api/currentUser', {
+export async function queryCurrentUser(value) {
+  return request('/users/getCurrentUserInfo', {
     method: 'GET',
-    ...(options || {}),
+    // get请求使用params配置，post请求使用data配置。
+    params: {
+      username: value
+    },
   });
 }
 /** 退出登录接口 POST /api/login/outLogin */
@@ -22,7 +25,7 @@ export async function outLogin(options) {
 
 export async function login(body, options) {
   // TODO 自己写接口改这里api
-  return request('/api/login/account', {
+  return request('/users/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

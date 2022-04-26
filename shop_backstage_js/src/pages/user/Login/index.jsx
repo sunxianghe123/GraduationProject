@@ -27,10 +27,12 @@ const Login = () => {
   const { initialState, setInitialState } = useModel('@@initialState');
   const intl = useIntl();
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
-
+  const fetchUserInfo = async (username) => {
+    // initialState: 运行时配置中，getInitialState 的返回值
+    const userInfo = await initialState?.fetchUserInfo?.(username);
+    // console.log(userInfo, 'userInfo')
     if (userInfo) {
+      // setInitialState: 手动设置 initialState 的值，手动设置完毕会将 loading 置为 false.
       await setInitialState((s) => ({ ...s, currentUser: userInfo }));
     }
   };
@@ -38,22 +40,27 @@ const Login = () => {
   const handleSubmit = async (values) => {
     try {
       // 登录
-      const msg = await login({ ...values, type });
+      const msg = await login({ ...values });
+      const username = values.username;
 
-      if (msg.status === 'ok') {
+      if (msg.code === 200) {
         const defaultLoginSuccessMessage = intl.formatMessage({
           id: 'pages.login.success',
           defaultMessage: '登录成功！',
         });
+        sessionStorage.setItem("username", username);
         message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
+        await fetchUserInfo(username);
         /** 此方法会跳转到 redirect 参数所在的位置 */
-
+        // console.log(history, 'history')
         if (!history) return;
         const { query } = history.location;
         const { redirect } = query;
+        // TODO 登录成功后跳转到重定向页面，在此做前后台页面的权限管理
         history.push(redirect || '/');
         return;
+      } else {
+        message.error(msg.msg);
       }
 
       console.log(msg); // 如果失败去设置用户错误信息
@@ -87,6 +94,7 @@ const Login = () => {
           }}
           actions={[]}
           onFinish={async (values) => {
+            console.log(values);
             await handleSubmit(values);
           }}
         >

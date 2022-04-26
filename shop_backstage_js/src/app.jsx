@@ -1,18 +1,18 @@
-import { SettingDrawer } from '@ant-design/pro-layout';
-import { PageLoading } from '@ant-design/pro-layout';
-import { history } from 'umi';
+import {SettingDrawer} from '@ant-design/pro-layout';
+import {PageLoading} from '@ant-design/pro-layout';
+import {history} from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import {queryCurrentUser} from './services/ant-design-pro/api';
 import defaultSettings from '../config/defaultSettings';
 // const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
-import { notification } from 'antd';
+import {notification} from 'antd';
 
 /** 获取用户信息比较慢的时候会展示一个 loading */
 
 export const initialStateConfig = {
-  loading: <PageLoading />,
+  loading: <PageLoading/>,
 };
 /**
  * @see  https://umijs.org/zh-CN/plugins/plugin-initial-state
@@ -41,8 +41,8 @@ const codeMessage = {
 const requestInterceptor = (url, options) => {
   console.log(options)
   return {
-    // url: 'http://localhost:3009' + url, // 此处可以添加域名前缀
-    url,
+    url: 'http://localhost:3000' + url, // 此处可以添加域名前缀
+    // url,
     options: {
       ...options,
       // headers: {
@@ -57,10 +57,10 @@ const responseInterceptor = (response, options) => {
   return response;
 };
 const errorHandler = (error) => {
-  const { response } = error;
+  const {response} = error;
   if (response && response.status) {
     const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
+    const {status, url} = response;
     console.log(`请求错误 ${status}: ${url}`);
     // notification.error({
     //   message: `请求错误 ${status}: ${url}`,
@@ -88,10 +88,11 @@ export const request = {
 
 // getInitialState会在整个应用最开始执行，返回值会作为全局共享的数据 约定一个地方生产和消费初始化数据
 export async function getInitialState() {
-  const fetchUserInfo = async () => {
+  const username = sessionStorage.getItem("username");
+  const fetchUserInfo = async (username) => {
     try {
-      const msg = await queryCurrentUser();
-      return msg.data;
+      const msg = await queryCurrentUser(username);
+      return msg.list;
     } catch (error) {
       history.push(loginPath);
     }
@@ -102,7 +103,7 @@ export async function getInitialState() {
   console.log(history)
   console.log(loginPath)
   if (history.location.pathname !== loginPath) {
-    const currentUser = await fetchUserInfo();
+    const currentUser = await fetchUserInfo(username);
     return {
       fetchUserInfo,
       currentUser,
@@ -117,18 +118,18 @@ export async function getInitialState() {
 } // ProLayout 支持的api https://procomponents.ant.design/components/layout
 
 // 在构建时是无法使用 dom 的，所以有些配置可能需要运行时来配置（运行时配置）
-export const layout = ({ initialState, setInitialState }) => {
+export const layout = ({initialState, setInitialState}) => {
   console.log(initialState)
   console.log(setInitialState)
   return {
-    rightContentRender: () => <RightContent />,
+    rightContentRender: () => <RightContent/>,
     disableContentMargin: false,
     waterMarkProps: {      // 添加水印
       content: initialState?.currentUser?.name,
     },
-    footerRender: () => <Footer />,
+    footerRender: () => <Footer/>,
     onPageChange: () => {
-      const { location } = history; // 如果没有登录，重定向到 login
+      const {location} = history; // 如果没有登录，重定向到 login
 
       if (!initialState?.currentUser && location.pathname !== loginPath) {
         history.push(loginPath);
@@ -150,7 +151,7 @@ export const layout = ({ initialState, setInitialState }) => {
               enableDarkTheme
               settings={initialState?.settings}
               onSettingChange={(settings) => {
-                setInitialState((preInitialState) => ({ ...preInitialState, settings }));
+                setInitialState((preInitialState) => ({...preInitialState, settings}));
               }}
             />
           )}
