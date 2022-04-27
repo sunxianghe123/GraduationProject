@@ -39,7 +39,7 @@ const codeMessage = {
 };
 // 全局请求
 const requestInterceptor = (url, options) => {
-  console.log(options)
+  // console.log(options)
   return {
     url: 'http://localhost:3000' + url, // 此处可以添加域名前缀
     // url,
@@ -53,7 +53,6 @@ const requestInterceptor = (url, options) => {
 };
 // 全局响应拦截
 const responseInterceptor = (response, options) => {
-  console.log('返回了');
   return response;
 };
 const errorHandler = (error) => {
@@ -100,8 +99,8 @@ export async function getInitialState() {
     return undefined;
   };
   // 如果不是登录页面，执行
-  console.log(history)
-  console.log(loginPath)
+  // console.log(history)
+  // console.log(loginPath)
   if (history.location.pathname !== loginPath) {
     const currentUser = await fetchUserInfo(username);
     return {
@@ -119,8 +118,8 @@ export async function getInitialState() {
 
 // 在构建时是无法使用 dom 的，所以有些配置可能需要运行时来配置（运行时配置）
 export const layout = ({initialState, setInitialState}) => {
-  console.log(initialState)
-  console.log(setInitialState)
+  // console.log(initialState)
+  // console.log(setInitialState)
   return {
     rightContentRender: () => <RightContent/>,
     disableContentMargin: false,

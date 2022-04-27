@@ -43,6 +43,12 @@ export default [
     ],
   },
   {
+    path: '/dashboard',
+    name: 'DashBoard',
+    icon: 'FundOutlined',
+    component: './DashBoard',
+  },
+  {
     name: 'list.table-list',
     icon: 'table',
     path: '/list',
