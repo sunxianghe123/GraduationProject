@@ -66,6 +66,7 @@ const getUnreadData = (noticeData) => {
 const NoticeIconView = () => {
   const { initialState } = useModel('@@initialState');
   const { currentUser } = initialState || {};
+  console.log(currentUser, 'currentUser');
   const [notices, setNotices] = useState([]);
   const { data } = useRequest(getNotices);
   useEffect(() => {
