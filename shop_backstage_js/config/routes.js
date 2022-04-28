@@ -49,6 +49,12 @@ export default [
     component: './DashBoard',
   },
   {
+    path: '/usermanage',
+    name: 'UserManage',
+    icon: 'UserOutlined',
+    component: './UserManage',
+  },
+  {
     name: 'list.table-list',
     icon: 'table',
     path: '/list',

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {PageContainer} from '@ant-design/pro-layout';
 import {Statistic, Card, Row, Col} from 'antd';
 // import {ArrowUpOutlined, ArrowDownOutlined} from '@ant-design/icons';
-import {getCountArr} from "@/services/ant-design-pro/dashboard";
+import {getCountArr} from "@/services/dashboard";
 
 const Dashboard = () => {
   // 定义组件状态，状态改变，会引起组件重新渲染

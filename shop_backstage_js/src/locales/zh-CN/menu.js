@@ -50,4 +50,5 @@ export default {
   'menu.editor.mind': '脑图编辑器',
   'menu.editor.koni': '拓扑编辑器',
   'menu.DashBoard': '统计面板',
+  'menu.UserManage': '用户管理',
 };
