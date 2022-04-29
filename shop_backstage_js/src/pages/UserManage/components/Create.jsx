@@ -11,7 +11,6 @@ const Create = (props) => {
    * @param values
    */
   const postCreateUser = async (values) => {
-    console.log(values);
     const response = await addUser(values);
     if (response.code === 200) {
       message.success('添加成功');

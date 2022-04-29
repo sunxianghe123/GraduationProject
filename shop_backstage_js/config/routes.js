@@ -54,12 +54,12 @@ export default [
     icon: 'UserOutlined',
     component: './UserManage',
   },
-  {
-    name: 'list.table-list',
-    icon: 'table',
-    path: '/list',
-    component: './TableList',
-  },
+  // {
+  //   path: '/goods',
+  //   name: 'Goods',
+  //   icon: 'ShopOutlined',
+  //   component: './Goods',
+  // },
   {
     path: '/',
     redirect: '/welcome',

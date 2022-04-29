@@ -4,12 +4,13 @@ import ProTable from "@ant-design/pro-table";
 import {Button, Avatar, Switch, message} from "antd";
 import {PlusOutlined, EllipsisOutlined, UserOutlined} from '@ant-design/icons';
 import {getUsers, lockUser} from "@/services/user";
-import Create from "@/pages/UserManage/components/Create";
-import Edit from "@/pages/UserManage/components/Edit";
+// import Create from "@/pages/UserManage/components/Create";
+// import Edit from "@/pages/UserManage/components/Edit";
+import CreateOrEdit from "@/pages/UserManage/components/CreateOrEdit";
 
 const Index = () => {
   let [isModalVisible, setIsModalVisible] = useState(false);
-  let [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
+  // let [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
   let [editId, setEditId] = useState(undefined);
 
   // 表格的ref，便于自定义操作表格
@@ -49,17 +50,19 @@ const Index = () => {
    * 控制对话框显示和隐藏
    * @returns {Promise<void>}
    */
-  const isShowModal = async (show) => {
+  const isShowModal = async (show, user_id) => {
+    setEditId(undefined);
     setIsModalVisible(show);
+    if(user_id) setEditId(user_id);
   }
-  /**
-   * 控制编辑框显示和隐藏
-   * @returns {Promise<void>}
-   */
-  const isShowModalEdit = async (show, user_id) => {
-    setIsModalVisibleEdit(show);
-    setEditId(user_id);
-  }
+  // /**
+  //  * 控制编辑框显示和隐藏
+  //  * @returns {Promise<void>}
+  //  */
+  // const isShowModalEdit = async (show, user_id) => {
+  //   setIsModalVisibleEdit(show);
+  //   setEditId(user_id);
+  // }
 
   /**
    * 打开添加用户表单
@@ -104,7 +107,7 @@ const Index = () => {
     },
     {
       title: '操作',
-      render: (_, record) => <a key="editable" onClick={() => isShowModalEdit(true, record.user_id)}>编辑</a>
+      render: (_, record) => <a key="editable" onClick={() => isShowModal(true, record.user_id)}>编辑</a>
     },
   ];
 
@@ -139,21 +142,33 @@ const Index = () => {
           </Button>,
         ]}
       />
-      <Create
-        isModalVisible={isModalVisible}
-        isShowModal={isShowModal}
-        actionRef={actionRef}
-      />
+
       {
-        isModalVisibleEdit ?
-          <Edit
-            isModalVisible={isModalVisibleEdit}
-            isShowModal={isShowModalEdit}
+        isModalVisible ?
+          <CreateOrEdit
+            isModalVisible={isModalVisible}
+            isShowModal={isShowModal}
             actionRef={actionRef}
             editId={editId}
           />
           : ''
       }
+
+      {/*<Create*/}
+      {/*  isModalVisible={isModalVisible}*/}
+      {/*  isShowModal={isShowModal}*/}
+      {/*  actionRef={actionRef}*/}
+      {/*/>*/}
+      {/*{*/}
+      {/*  isModalVisibleEdit ?*/}
+      {/*    <Edit*/}
+      {/*      isModalVisible={isModalVisibleEdit}*/}
+      {/*      isShowModal={isShowModalEdit}*/}
+      {/*      actionRef={actionRef}*/}
+      {/*      editId={editId}*/}
+      {/*    />*/}
+      {/*    : ''*/}
+      {/*}*/}
     </PageContainer>
   );
 };
