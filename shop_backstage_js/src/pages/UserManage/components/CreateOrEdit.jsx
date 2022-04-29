@@ -4,7 +4,9 @@ import {message, Modal, Skeleton} from "antd";
 import {addUser, editUser, getCurrentUserInfo} from "@/services/user";
 
 const Edit = (props) => {
+  // 将表单初始化的值设置成状态，在编辑的时候，获取数据之后，修改状态，状态改变，组件重新渲染
   let [initialValues, setInitialValues] = useState(undefined);
+  // actionRef 父组件传过来的表格的引用，可以用来操作表格
   const {isModalVisible, isShowModal, actionRef, editId} = props;
   const type = (editId === undefined) ? '添加' : '编辑';
 
