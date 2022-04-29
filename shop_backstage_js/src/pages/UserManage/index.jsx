@@ -1,13 +1,18 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {PageContainer} from "@ant-design/pro-layout";
 import ProTable from "@ant-design/pro-table";
-import {Button, Avatar, Switch} from "antd";
+import {Button, Avatar, Switch, message} from "antd";
 import {PlusOutlined, EllipsisOutlined, UserOutlined} from '@ant-design/icons';
 import {getUsers, lockUser} from "@/services/user";
-import {message} from "antd";
+import Create from "@/pages/UserManage/components/Create";
+import Edit from "@/pages/UserManage/components/Edit";
 
 const Index = () => {
+  let [isModalVisible, setIsModalVisible] = useState(false);
+  let [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
+  let [editId, setEditId] = useState(undefined);
 
+  // 表格的ref，便于自定义操作表格
   const actionRef = useRef();
 
   /**
@@ -17,7 +22,6 @@ const Index = () => {
    */
   const getData = async (params) => {
     const response = await getUsers(params);
-    console.log(response)
 
     return {
       data: response?.data,
@@ -40,6 +44,31 @@ const Index = () => {
       message.success('操作失败');
     }
   }
+
+  /**
+   * 控制对话框显示和隐藏
+   * @returns {Promise<void>}
+   */
+  const isShowModal = async (show) => {
+    setIsModalVisible(show);
+  }
+  /**
+   * 控制编辑框显示和隐藏
+   * @returns {Promise<void>}
+   */
+  const isShowModalEdit = async (show, user_id) => {
+    setIsModalVisibleEdit(show);
+    setEditId(user_id);
+  }
+
+  /**
+   * 打开添加用户表单
+   * @returns {Promise<void>}
+   */
+  const openAddUser = async () => {
+    setIsModalVisible(true);
+  }
+
 
   const columns = [
     {
@@ -75,8 +104,7 @@ const Index = () => {
     },
     {
       title: '操作',
-      render: (_, record) => <a key="editable" onChange={() => {
-      }}>编辑</a>
+      render: (_, record) => <a key="editable" onClick={() => isShowModalEdit(true, record.user_id)}>编辑</a>
     },
   ];
 
@@ -106,11 +134,26 @@ const Index = () => {
         dateFormatter="string"
         headerTitle="用户列表"
         toolBarRender={() => [
-          <Button key="button" icon={<PlusOutlined/>} type="primary">
+          <Button key="button" icon={<PlusOutlined/>} type="primary" onClick={() => isShowModal(true)}>
             新建
           </Button>,
         ]}
       />
+      <Create
+        isModalVisible={isModalVisible}
+        isShowModal={isShowModal}
+        actionRef={actionRef}
+      />
+      {
+        isModalVisibleEdit ?
+          <Edit
+            isModalVisible={isModalVisibleEdit}
+            isShowModal={isShowModalEdit}
+            actionRef={actionRef}
+            editId={editId}
+          />
+          : ''
+      }
     </PageContainer>
   );
 };
