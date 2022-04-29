@@ -1,12 +1,10 @@
 import React, {useRef, useState} from 'react';
 import {PageContainer} from "@ant-design/pro-layout";
 import ProTable from "@ant-design/pro-table";
-import {Button, Avatar, Switch, message} from "antd";
-import {PlusOutlined, EllipsisOutlined, UserOutlined} from '@ant-design/icons';
-import {getUsers, lockUser} from "@/services/user";
-// import Create from "@/pages/UserManage/components/Create";
-// import Edit from "@/pages/UserManage/components/Edit";
-import CreateOrEdit from "@/pages/UserManage/components/CreateOrEdit";
+import {Button, Image, Switch, message} from "antd";
+import {PlusOutlined} from '@ant-design/icons';
+import {getGoods, lockGood, isRecommendGood} from "@/services/goods";
+import CreateOrEdit from "@/pages/Goods/components/CreateOrEdit";
 
 const Index = () => {
   let [isModalVisible, setIsModalVisible] = useState(false);
@@ -17,13 +15,13 @@ const Index = () => {
   const actionRef = useRef();
 
   /**
-   * 获取用户列表数据
+   * 获取商品列表数据
    * @param params
    * @returns {Promise<{total: *, data: *, success: boolean}>}
    */
   const getData = async (params) => {
-    const response = await getUsers(params);
-
+    const response = await getGoods(params);
+    console.log(response)
     return {
       data: response?.data,
       success: true,
@@ -33,12 +31,26 @@ const Index = () => {
   }
 
   /**
-   * 封禁和启用用户
+   * 是否上架商品
    * @param record
    * @returns {Promise<void>}
    */
-  const handleLockUser = async (record) => {
-    const response = await lockUser(record.user_id, Number(!record.is_locked));
+  const handleLockGood = async (record) => {
+    const response = await lockGood(record.id, Number(!record.is_on));
+    if (response.code === 200) {
+      message.success('操作成功');
+    } else {
+      message.success('操作失败');
+    }
+  }
+
+  /**
+   * 是否推荐商品
+   * @param record
+   * @returns {Promise<void>}
+   */
+  const handleRecommendGood = async (record) => {
+    const response = await isRecommendGood(record.id, Number(!record.is_recommend));
     if (response.code === 200) {
       message.success('操作成功');
     } else {
@@ -50,60 +62,80 @@ const Index = () => {
    * 控制对话框显示和隐藏
    * @returns {Promise<void>}
    */
-  const isShowModal = async (show, user_id) => {
+  const isShowModal = async (show, id) => {
     setEditId(undefined);
     setIsModalVisible(show);
-    if(user_id) setEditId(user_id);
+    if(id) setEditId(id);
   }
-  // /**
-  //  * 控制编辑框显示和隐藏
-  //  * @returns {Promise<void>}
-  //  */
-  // const isShowModalEdit = async (show, user_id) => {
-  //   setIsModalVisibleEdit(show);
-  //   setEditId(user_id);
-  // }
-
-  /**
-   * 打开添加用户表单
-   * @returns {Promise<void>}
-   */
-  const openAddUser = async () => {
-    setIsModalVisible(true);
-  }
-
 
   const columns = [
     {
-      title: '头像',
-      dataIndex: 'avatar',
+      title: '商品图',
+      dataIndex: 'cover',
       hideInSearch: true,
-      render: (_, record) => <Avatar
-        key="avatar"
-        src={record.avatar}
-        size={32}
-        icon={<UserOutlined/>}
+      render: (_, record) => <Image
+        width={50}
+        src={record.cover}
+        placeholder={
+          <Image
+            preview={false}
+            src={record.cover}
+            width={200}
+          />
+        }
       />
     },
     {
-      title: '姓名',
-      dataIndex: 'username',
+      title: '类别',
+      dataIndex: 'title',
     },
     {
-      title: '邮箱',
-      dataIndex: 'email',
+      title: '商品名称',
+      dataIndex: 'description',
     },
     {
-      title: '是否禁用',
-      dataIndex: 'is_locked',
-      hideInSearch: true,
+      title: '价格',
+      dataIndex: 'price',
+    },
+    {
+      title: '库存',
+      dataIndex: 'stock',
+    },
+    {
+      title: '销量',
+      dataIndex: 'sales',
+    },
+    {
+      title: '是否上架',
+      dataIndex: 'is_on',
       render: (_, record) => <Switch
         key="switch"
-        checkedChildren="启用"
-        unCheckedChildren="禁用"
-        defaultChecked={record.is_locked === 0}
-        onChange={() => handleLockUser(record)}
-      />
+        checkedChildren="已上架"
+        unCheckedChildren="未上架"
+        defaultChecked={record.is_on === 1}
+        onChange={() => handleLockGood(record)}
+      />,
+      valueType: 'radioButton',
+      valueEnum: {
+        1: {text: '已上架'},
+        0: {text: '未上架'}
+      }
+    },
+    {
+      title: '是否推荐',
+      dataIndex: 'is_recommend',
+      render: (_, record) => <Switch
+        key="switch"
+        checkedChildren="已推荐"
+        unCheckedChildren="未推荐"
+        defaultChecked={record.is_recommend === 1}
+        onChange={() => handleRecommendGood(record)}
+      />,
+      valueType: 'radioButton',
+      valueEnum: {
+        1: {text: '已推荐'},
+        0: {text: '未推荐'}
+      }
     },
     {
       title: '创建时间',
@@ -112,11 +144,8 @@ const Index = () => {
     },
     {
       title: '操作',
+      render: (_, record) => <a key="editable" onClick={() => isShowModal(true, record.id)}>编辑</a>,
       hideInSearch: true,
-      render: (_, record) => <a
-        key="editable"
-        onClick={() => isShowModal(true, record.user_id)}
-      >编辑</a>
     },
   ];
 
@@ -144,7 +173,7 @@ const Index = () => {
           // onChange: (page) => console.log(page),
         }}
         dateFormatter="string"
-        headerTitle="用户列表"
+        headerTitle="商品列表"
         toolBarRender={() => [
           <Button key="button" icon={<PlusOutlined/>} type="primary" onClick={() => isShowModal(true)}>
             新建
@@ -159,26 +188,9 @@ const Index = () => {
             isShowModal={isShowModal}
             actionRef={actionRef}
             editId={editId}
-            key='CreateOrEdit'
           />
           : ''
       }
-
-      {/*<Create*/}
-      {/*  isModalVisible={isModalVisible}*/}
-      {/*  isShowModal={isShowModal}*/}
-      {/*  actionRef={actionRef}*/}
-      {/*/>*/}
-      {/*{*/}
-      {/*  isModalVisibleEdit ?*/}
-      {/*    <Edit*/}
-      {/*      isModalVisible={isModalVisibleEdit}*/}
-      {/*      isShowModal={isShowModalEdit}*/}
-      {/*      actionRef={actionRef}*/}
-      {/*      editId={editId}*/}
-      {/*    />*/}
-      {/*    : ''*/}
-      {/*}*/}
     </PageContainer>
   );
 };

@@ -50,6 +50,7 @@ const Edit = (props) => {
 
   return (
     <Modal
+      key='modal'
       title={`${type}用户`}
       visible={isModalVisible}
       // onOk={handleOk}
