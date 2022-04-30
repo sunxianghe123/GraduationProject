@@ -1,0 +1,19 @@
+{
+  "name": "shop_foreground",
+  "version": "1.0.0",
+  "description": "商城前台系统",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sunxianghe123/shop_foreground.git"
+  },
+  "author": "sunxianghe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sunxianghe123/shop_foreground/issues"
+  },
+  "homepage": "https://github.com/sunxianghe123/shop_foreground#readme"
+}
