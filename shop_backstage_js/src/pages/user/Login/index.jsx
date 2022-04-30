@@ -94,7 +94,6 @@ const Login = () => {
           }}
           actions={[]}
           onFinish={async (values) => {
-            console.log(values);
             await handleSubmit(values);
           }}
         >

@@ -61,6 +61,12 @@ export default [
     component: './Goods',
   },
   {
+    path: '/slides',
+    name: 'Slides',
+    icon: 'PictureOutlined',
+    component: './Slides',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },

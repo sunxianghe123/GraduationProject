@@ -52,4 +52,5 @@ export default {
   'menu.DashBoard': '统计面板',
   'menu.UserManage': '用户管理',
   'menu.Goods': '商品管理',
+  'menu.Slides': '轮播管理',
 };
