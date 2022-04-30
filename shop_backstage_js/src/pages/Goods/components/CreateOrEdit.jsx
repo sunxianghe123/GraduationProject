@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import ProForm, {ProFormText, ProFormDateTimePicker } from "@ant-design/pro-form";
-import {message, Modal, Skeleton} from "antd";
+import ProForm, {ProFormDigit, ProFormText, ProFormUploadButton, ProFormTextArea} from "@ant-design/pro-form";
+import {message, Modal, Skeleton, Cascader} from "antd";
 import {addGoods, editGoodInfo, getCurrentGoodInfo} from "@/services/goods";
 
 const Edit = (props) => {
@@ -14,7 +14,7 @@ const Edit = (props) => {
     // 发送请求获取用户详情
     if (editId !== undefined) {
       const response = (await getCurrentGoodInfo(editId))['list'][0];
-      console.log(response)
+      response.cover = JSON.parse(response.cover);
       setInitialValues({
         title: response.title,
         description: response.description,
@@ -26,12 +26,13 @@ const Edit = (props) => {
     }
   }, []);
 
-  const handleSubmit = async (values) =>{
-    let response = {};
-    if(editId === undefined) {
-      response = await addGoods(values);
+  const handleSubmit = async (values) => {
+    let response = editId !== undefined ? (await getCurrentGoodInfo(editId))['list'][0] : {};
+    values.cover = values.cover ? JSON.stringify(values.cover) : undefined;
+    let params = {...response, ...values, id: editId};
+    if (editId === undefined) {
+      response = await addGoods(params);
     } else {
-      let params = {...values, id: editId, };
       response = await editGoodInfo(params);
     }
     if (response.code === 200) {
@@ -78,34 +79,38 @@ const Edit = (props) => {
               placeholder="请输入商品名称"
               rules={[
                 {required: true, message: '请输入商品名称'},
-                {max: 12, message: '商品名称最大长度为12个字符'}
+                {max: 20, message: '商品名称最大长度为12个字符'}
               ]}
             />
-            <ProFormText
+            <ProFormDigit
               name="price"
               label="商品价格"
               placeholder="请输入商品价格"
+              min={0}
+              max={999999999}
               rules={[
                 {required: true, message: '请输入商品价格'},
               ]}
             />
-            <ProFormText
+            <ProFormDigit
               name="stock"
               label="商品库存"
               placeholder="请输入商品库存"
+              min={0}
+              max={9999}
               rules={[
                 {required: true, message: '请输入商品库存'},
               ]}
             />
-            <ProFormText
+            <ProFormUploadButton
               name="cover"
               label="商品封面"
-              placeholder="请输入商品封面"
+              action="cover.do"
               rules={[
-                {required: true, message: '请输入商品封面'},
+                {required: true, message: '请上传商品封面'},
               ]}
             />
-            <ProFormText
+            <ProFormTextArea
               name="details"
               label="商品详情"
               placeholder="请输入商品详情"

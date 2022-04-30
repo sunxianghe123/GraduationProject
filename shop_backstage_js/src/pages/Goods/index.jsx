@@ -20,10 +20,16 @@ const Index = () => {
    * @returns {Promise<{total: *, data: *, success: boolean}>}
    */
   const getData = async (params) => {
-    const response = await getGoods(params);
-    console.log(response)
+    let response = (await getGoods(params))['data'];
+    // console.log(response)
+    response = response.map((item)=>{
+      item.cover = item.cover ? JSON.parse(item.cover) : item.cover;
+      // console.log(item)
+      return item;
+    })
+    // console.log(response, 'response24')
     return {
-      data: response?.data,
+      data: response,
       success: true,
       // 不传会使用 data 的长度，如果是分页一定要传
       total: response?.pagination?.total,
@@ -73,17 +79,19 @@ const Index = () => {
       title: '商品图',
       dataIndex: 'cover',
       hideInSearch: true,
-      render: (_, record) => <Image
-        width={50}
-        src={record.cover}
-        placeholder={
-          <Image
-            preview={false}
-            src={record.cover}
-            width={200}
-          />
-        }
-      />
+      render: (_, record) => {
+        return <Image
+          width={50}
+          src={record?.cover?.[0]?.thumbUrl}
+          placeholder={
+            <Image
+              preview={false}
+              src={record?.cover?.[0]?.thumbUrl}
+              width={200}
+            />
+          }
+        />
+      }
     },
     {
       title: '类别',
@@ -161,7 +169,7 @@ const Index = () => {
           persistenceKey: 'pro-table-singe-demos',
           persistenceType: 'localStorage',
           onChange(value) {
-            console.log('value: ', value);
+            // console.log('value: ', value);
           },
         }}
         rowKey="id"
