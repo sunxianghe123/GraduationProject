@@ -15,12 +15,14 @@ const Edit = (props) => {
     if (editId !== undefined) {
       const response = (await getCurrentGoodInfo(editId))['list'][0];
       response.cover = JSON.parse(response.cover);
+      response.pics = JSON.parse(response.pics);
       setInitialValues({
         title: response.title,
         description: response.description,
         price: Number(response.price),
         stock: Number(response.stock),
         cover: response.cover,
+        pics: response.pics,
         details: response.details,
       })
     }
@@ -29,6 +31,7 @@ const Edit = (props) => {
   const handleSubmit = async (values) => {
     let response = editId !== undefined ? (await getCurrentGoodInfo(editId))['list'][0] : {};
     values.cover = values.cover ? JSON.stringify(values.cover) : undefined;
+    values.pics = values.pics ? JSON.stringify(values.pics) : undefined;
     let params = {...response, ...values, id: editId};
     if (editId === undefined) {
       response = await addGoods(params);
@@ -108,6 +111,13 @@ const Edit = (props) => {
               action="cover.do"
               rules={[
                 {required: true, message: '请上传商品封面'},
+              ]}
+            />
+            <ProFormUploadButton
+              name="pics"
+              label="商品图集"
+              rules={[
+                {required: true, message: '请上传商品图集'},
               ]}
             />
             <ProFormTextArea
