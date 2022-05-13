@@ -102,7 +102,7 @@ const Edit = (props) => {
               label="密码"
               placeholder="请输入密码"
               rules={[
-                {required: true, message: '请输入昵称'},
+                {required: true, message: '请输入密码'},
                 {min: 6, message: '密码最小为6位'},
                 {max: 12, message: '密码最大位12位'}
               ]}
